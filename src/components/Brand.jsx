@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches
+
 /* A marca.
    Símbolo: um asterisco fino de oito braços — o ponto que se abre em direções.
    É a tese em forma de sinal: um centro, e o campo que nasce dele.
@@ -5,6 +8,7 @@
    O nome ainda não fechou: troque BRAND / BRAND_SHORT e o resto acompanha. */
 export const BRAND = 'Expertise que Vende'
 export const BRAND_SHORT = 'expertise'
+export const BRAND_TAIL = 'que vende'
 
 // um "brilho" de 4 braços; o de 8 é este mais uma cópia girada e menor
 const spark = (L, k = .055, m = .24) =>
@@ -25,12 +29,20 @@ export function Wordmark({ size = 22 }) {
 }
 
 export function Splash({ onDone }) {
+  // sai sozinha; o fio embaixo do lockup é o próprio tempo correndo
+  useEffect(() => {
+    const t = setTimeout(onDone, REDUCED ? 900 : 5000)
+    return () => clearTimeout(t)
+  }, [onDone])
   return (
     <div className="splash" onClick={onDone}>
       <div className="splash-field" aria-hidden="true"><i /><i /><i /></div>
       <div className="splash-in">
         <div className="splash-eyebrow">MÉTODO CHRYSTIAN BORGES</div>
-        <div className="splash-logo"><Mark size={104} className="big" />{BRAND_SHORT}</div>
+        <div className="splash-logo">
+          <Mark size={104} className="big" />
+          <span className="lockup">{BRAND_SHORT}<em>{BRAND_TAIL}</em></span>
+        </div>
         <p>A tese que já existe dentro de você, materializada em campanha.</p>
         <span className="splash-line" />
       </div>

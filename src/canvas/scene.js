@@ -40,7 +40,7 @@ export function targetsFor(open, s, w, h) {
       const n = countOf(f), total = f.items.length
       const cls = f.items.some(x => s.flagged.has(x.id)) ? 'flag' : n === total ? 'on' : n > 0 || f.items.some(x => s.pending.has(x.id)) ? 'pend' : 'off'
       const x = c.x + Math.cos(a) * R * k, y = c.y + Math.sin(a) * RY * k
-      out.push({ id: f.id, x, y, type: 'branch', parent: 'core', frame: f.id, cls, n, total })
+      out.push({ id: f.id, x, y, type: 'branch', parent: 'core', frame: f.id, cls, n, total, ord: i })
       // sinapses: um ponto por card já gerado, num arco por fora do ramo
       if (n > 0) {
         const list = f.items.slice(0, 12), m = list.length
@@ -67,7 +67,7 @@ export function targetsFor(open, s, w, h) {
       const it = list[idx]
       const a = -Math.PI / 2 + off + j * 2 * Math.PI / cap
       const [cw, ch] = cardSize(it.kind)
-      out.push({ id: it.id, x: c.x + Math.cos(a) * rad, y: c.y + Math.sin(a) * rad * .86, type: 'card', parent: f.id, item: it.id, cls: stateOf(it.id), w: cw, h: ch })
+      out.push({ id: it.id, x: c.x + Math.cos(a) * rad, y: c.y + Math.sin(a) * rad * .86, type: 'card', parent: f.id, item: it.id, cls: stateOf(it.id), w: cw, h: ch, ord: idx })
     }
   })
   out.push({ id: 'return', x: 92, y: h * .1, type: 'return', parent: f.id })

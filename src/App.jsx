@@ -22,6 +22,7 @@ export default function App() {
   const [open, setOpen] = useState(null)
   const [sparks, setSparks] = useState([])
   const [splash, setSplash] = useState(true)
+  const [entered, setEntered] = useState(false)
   const spark = to => { const id = Math.random(); setSparks(x => [...x, { id, to, t: performance.now() }]); setTimeout(() => setSparks(x => x.filter(z => z.id !== id)), 1100) }
   const step = useRef(0), scratch = useRef({}), choicesRef = useRef([]); choicesRef.current = choices
 
@@ -75,8 +76,8 @@ export default function App() {
 
   return (
     <>
-    {splash && <Splash onDone={() => setSplash(false)} />}
-    <div className={'app' + (collapsed ? ' chat-collapsed' : '')}>
+    {splash && <Splash onDone={() => { setSplash(false); setEntered(true) }} />}
+    <div className={'app' + (collapsed ? ' chat-collapsed' : '') + (entered ? ' entered' : '')}>
       <Topbar phase={s.phase} open={open} onHome={() => { setOpen(null); setSelected(null) }} onAuto={runAuto} onReset={() => location.reload()} onTheme={theme} auto={auto} />
       <section className="side" aria-label="Conversa e camadas">
         <div className="tabs">
@@ -88,7 +89,7 @@ export default function App() {
           ? <Chat s={s} messages={messages} choices={choices} status={status} onSay={say} onChoice={onChoice} listening={listening} busy={busy} />
           : <Layers s={s} selected={selected} onSelect={setSelected} onOpen={setOpen} />}
       </section>
-      <Scene s={s} selected={selected} open={open} onOpen={setOpen} onSelect={setSelected} sparks={sparks} />
+      <Scene s={s} selected={selected} open={open} onOpen={setOpen} onSelect={setSelected} sparks={sparks} boot={entered} />
       <Inspector s={s} selected={selected} choices={choices} onChoice={onChoice} />
     </div>
     </>

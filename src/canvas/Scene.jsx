@@ -17,20 +17,23 @@ import { Preview } from './Cards.jsx'
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches
 const DUR = 1450
 
-export function Scene({ s, selected, open, onOpen, onSelect, sparks }) {
+export function Scene({ s, selected, open, onOpen, onSelect, sparks, boot }) {
   const stage = useRef(null), cvRef = useRef(null), layerRef = useRef(null)
   const sc = useRef(new Map())          // id -> { from, to, now, delay, phase, type, parent, data, el }
   const size = useRef({ w: 0, h: 0 })
   const t0 = useRef(0)
-  const live = useRef({ s, open, selected, sparks })
-  live.current = { s, open, selected, sparks }
+  const live = useRef({ s, open, selected, sparks, boot })
+  live.current = { s, open, selected, sparks, boot }
+  const booted = useRef(false)
   const [nodes, setNodes] = useState([])
   const [, bump] = useState(0)
 
   /* ---------- diff: calcula alvos e prepara a transição ---------- */
   const relayout = useCallback(() => {
     const { w, h } = size.current; if (!w) return
-    const { s, open } = live.current, c = center(w, h)
+    const { s, open, boot } = live.current, c = center(w, h)
+    if (!boot) return                      // a rede só nasce quando a marca sai
+    const first = !booted.current; booted.current = true
     const targets = targetsFor(open, s, w, h)
     const ids = new Set(targets.map(t => t.id))
     sc.current.forEach((n, id) => {
@@ -43,11 +46,14 @@ export function Scene({ s, selected, open, onOpen, onSelect, sparks }) {
       let n = sc.current.get(t.id)
       if (!n) {
         const p = sc.current.get(t.parent)?.now || { x: c.x, y: c.y }
-        n = { now: { x: mix(p.x, t.x, .45), y: mix(p.y, t.y, .45), opacity: 0 }, phase: phaseOf(t.id) }
+        const seed = first ? { x: c.x, y: c.y } : { x: mix(p.x, t.x, .45), y: mix(p.y, t.y, .45) }
+        n = { now: { ...seed, opacity: 0 }, phase: phaseOf(t.id) }
         sc.current.set(t.id, n)
       }
       n.from = { ...n.now }
-      n.delay = t.type === 'core' || t.type === 'nucleus' ? 0 : t.type === 'card' ? 130 : t.type === 'syn' ? 30 + n.phase % 90 : 40 + n.phase % 120
+      n.delay = first
+        ? (t.type === 'core' ? 0 : 320 + (t.ord ?? 0) * 90)
+        : t.type === 'core' || t.type === 'nucleus' ? 0 : t.type === 'card' ? 130 : t.type === 'syn' ? 30 + n.phase % 90 : 40 + n.phase % 120
       n.to = { x: t.x, y: t.y, opacity: 1 }
       n.parent = t.parent; n.type = t.type; n.data = t; n.exiting = false
     })
@@ -55,7 +61,7 @@ export function Scene({ s, selected, open, onOpen, onSelect, sparks }) {
     setNodes([...sc.current.values()].map(n => n.data))
   }, [])
 
-  useLayoutEffect(() => { relayout() }, [s, open, relayout])
+  useLayoutEffect(() => { relayout() }, [s, open, boot, relayout])
 
   useEffect(() => {
     const el = stage.current
