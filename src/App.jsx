@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Scene } from './canvas/Scene.jsx'
+import { CanvasDoc } from './canvas/CanvasDoc.jsx'
 import { ITEMS } from './canvas/model.js'
 import { Splash } from './components/Brand.jsx'
-import { Topbar, Chat, Layers, Inspector } from './components/Panels.jsx'
+import { Topbar, Chat, Layers, Memory, Inspector } from './components/Panels.jsx'
 import { STEPS } from './journey/journey.js'
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
@@ -23,6 +24,8 @@ export default function App() {
   const [sparks, setSparks] = useState([])
   const [splash, setSplash] = useState(true)
   const [entered, setEntered] = useState(false)
+  const [view, setView] = useState('cerebro')
+  const [decisions, setDecisions] = useState([])
   const spark = to => { const id = Math.random(); setSparks(x => [...x, { id, to, t: performance.now() }]); setTimeout(() => setSparks(x => x.filter(z => z.id !== id)), 1100) }
   const step = useRef(0), scratch = useRef({}), choicesRef = useRef([]); choicesRef.current = choices
 
@@ -46,6 +49,9 @@ export default function App() {
     // Trocar de módulo a cada resposta desorienta; quem entra é a pessoa.
     focus: id => setSelected(FRAMES_IDS.includes(id) ? { frame: id } : { item: id }),
     fit: () => { setSelected(null); setOpen(null) },
+    // memória: toda decisão guarda de onde veio
+    decide: (titulo, valor, origem) => setDecisions(d => [...d, { titulo, valor, origem, t: Date.now() }]),
+    view: v => setView(v),
   }).current
 
   const say = useCallback(async text => {
@@ -78,18 +84,23 @@ export default function App() {
     <>
     {splash && <Splash onDone={() => { setSplash(false); setEntered(true) }} />}
     <div className={'app' + (collapsed ? ' chat-collapsed' : '') + (entered ? ' entered' : '')}>
-      <Topbar phase={s.phase} open={open} onHome={() => { setOpen(null); setSelected(null) }} onAuto={runAuto} onReset={() => location.reload()} onTheme={theme} auto={auto} />
+      <Topbar phase={s.phase} open={open} view={view} onView={setView} onHome={() => { setOpen(null); setSelected(null); setView('cerebro') }} onAuto={runAuto} onReset={() => location.reload()} onTheme={theme} auto={auto} />
       <section className="side" aria-label="Conversa e camadas">
         <div className="tabs">
           <button className={tab === 'chat' ? 'on' : ''} onClick={() => setTab('chat')}>Conversa</button>
           <button className={tab === 'layers' ? 'on' : ''} onClick={() => setTab('layers')}>Camadas</button>
+          <button className={tab === 'mem' ? 'on' : ''} onClick={() => setTab('mem')}>Memória{decisions.length ? <i className="badge">{decisions.length}</i> : null}</button>
           <button className="collapse" onClick={() => setCollapsed(v => !v)} aria-label="Recolher">{collapsed ? '»' : '«'}</button>
         </div>
         {tab === 'chat'
           ? <Chat s={s} messages={messages} choices={choices} status={status} onSay={say} onChoice={onChoice} listening={listening} busy={busy} />
-          : <Layers s={s} selected={selected} onSelect={setSelected} onOpen={setOpen} />}
+          : tab === 'layers'
+            ? <Layers s={s} selected={selected} onSelect={setSelected} onOpen={setOpen} />
+            : <Memory decisions={decisions} />}
       </section>
-      <Scene s={s} selected={selected} open={open} onOpen={setOpen} onSelect={setSelected} sparks={sparks} boot={entered} />
+      {view === 'cerebro'
+        ? <Scene s={s} selected={selected} open={open} onOpen={setOpen} onSelect={setSelected} sparks={sparks} boot={entered} />
+        : <CanvasDoc s={s} selected={selected} onSelect={setSelected} onOpen={setOpen} onView={setView} />}
       <Inspector s={s} selected={selected} choices={choices} onChoice={onChoice} />
     </div>
     </>

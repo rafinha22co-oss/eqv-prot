@@ -60,6 +60,23 @@ export const ITEMS = Object.fromEntries(FRAMES.flatMap(f => f.items.map(i => [i.
 export const FRAME_BY_ID = Object.fromEntries(FRAMES.map(f => [f.id, f]))
 
 
+// colunas da visão Canvas: a campanha lida como documento
+export const COLUMNS = [
+  { id: 'diag', title: 'Diagnóstico', frames: ['diag'] },
+  { id: 'estrat', title: 'Estratégia', frames: ['estrat'] },
+  { id: 'copy', title: 'Copy', frames: ['anuncios', 'pagina', 'roteiro', 'reguas'] },
+  { id: 'exec', title: 'Execução', frames: ['exec'] },
+  { id: 'rastro', title: 'Rastreamento', frames: ['rastro'] },
+  { id: 'pos', title: 'Pós-live', frames: ['pos'] },
+]
+// frames grandes entram no documento como um card de resumo
+export const SUMMARY = {
+  anuncios: '10 ângulos · 1 UTM por instância',
+  pagina: '12 seções · mecanismo · oferta',
+  roteiro: '10 blocos · CTA no pitch',
+  reguas: 'aquecimento · evento · carrinho',
+}
+
 // grupos de desbloqueio usados pela jornada
 export const GROUPS = {
   diag: ['expert', 'conta', 'candidatos', 'pilha', 'mecanismo', 'traducoes'],

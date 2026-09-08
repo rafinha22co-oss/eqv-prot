@@ -30,6 +30,7 @@ export const STEPS = [
     a.listen(false); a.unlock('expert'); a.focus('expert'); a.pend('conta')
     await a.ai('Tem uma coisa na sua fala que me chamou atenção. Você não repetiu a descrição que o mercado usa. Você <b>redefiniu</b> o problema como fato: "é o que sobra depois de anos dizendo sim". Isso é crença formada. Então eu não preciso te levar do zero, só descer algumas camadas com você.')
     a.sys('Classificado: <b>Tipo B</b> (crença formada). Descendo até a conta fechar.')
+    a.decide('Toda campanha começa com uma história.', D.expert.crenca, 'dito pela expert · classificada Tipo B')
     await a.ai(D.camadas[0][0]); a.choices([['Responder (exemplo)', D.camadas[0][1], true]])
   },
   async (_, a) => { a.conta(1); await a.ai(D.camadas[1][0]); a.choices([['Responder (exemplo)', D.camadas[1][1], true]]) },
@@ -38,6 +39,7 @@ export const STEPS = [
   async (_, a) => {
     a.conta(3); a.unlock('conta'); a.focus('conta')
     a.sys('A conta fechou: <b>3 de 3</b>. Por que acontece · por que não resolve sozinha · como se resolve.')
+    a.decide('A conta fechou.', 'Por que acontece · por que não resolve sozinha · como se resolve.', 'três camadas da entrevista')
     await a.ai('Deixa eu devolver a explicação inteira, do jeito que eu entendi. ' + D.proposta)
     a.choices([['Sim, é isso', 'Sim, é exatamente isso.', true], ['Mais ou menos', 'Mais ou menos.']])
   },
@@ -61,6 +63,7 @@ export const STEPS = [
       a.choices([['Voltar aos candidatos', 'Deixa eu olhar os candidatos de novo.']]); return 'stay'
     }
     s.nome = /síndrome/i.test(said) ? 'Síndrome do Sim' : 'Falta de Permissão'
+    a.decide('O problema ganhou nome.', `<b>${s.nome}</b>`, 'escolha da expert entre 5 candidatos · filtros de som, curiosidade e vocabulário')
     a.pend('pilha'); a.focus('pilha')
     if (s.nome === 'Síndrome do Sim') await a.ai('Anotado: <b>Síndrome do Sim</b>. Passa nos três filtros. Só te aviso do risco: ele se explica sozinho, então um concorrente pega e usa amanhã. "Falta de Permissão" fica guardado.')
     else await a.ai('<b>Falta de Permissão</b>. É o que eu escolheria também: passa nos três filtros e exige a explicação pra fazer sentido, então carrega você junto. Quem copiar o nome sem a teoria fica com a casca.')
@@ -70,6 +73,7 @@ export const STEPS = [
   // 7 · tese fechada → fase 2
   async (_, a) => {
     a.unlock('pilha'); a.unlock('mecanismo'); a.unlock('traducoes'); a.focus('diag'); a.phase(2)
+    a.decide('A pilha fechou.', 'Falta de Permissão → aceitação condicionada a agradar → Permissão Restaurada → Protocolo de Permissão.', 'mecanismo: Permissão · 6 sessões traduzidas')
     a.sys('<b>Tese fechada.</b> Mecanismo: Permissão. As 6 sessões foram traduzidas pra dentro da teoria.')
     await a.ai('Agora o lançamento. Três perguntas rápidas. Quanto custa o programa que você quer vender, e como você prefere vender: por conversa ou por checkout direto?')
     a.choices([['R$ 4.900, por conversa', 'É um programa de 8 semanas, R$ 4.900. Prefiro vender conversando.', true], ['R$ 997, checkout', 'R$ 997 no checkout.']])
@@ -79,11 +83,12 @@ export const STEPS = [
   async (_, a, s) => {
     a.unlock('formato'); a.focus('formato')
     await a.ai(`Formato: <b>${s.alto ? 'Live única com aplicação' : 'Série de 3 CPLs com checkout'}</b>. Não é gosto meu, é a matriz: ${s.alto ? 'ticket alto vendido por conversa, operação enxuta, primeira vez. Um evento, uma régua, e o CTA é de aplicação, não de compra. O botão só nasce no pitch.' : 'ticket médio com checkout e uma crença que precisa mudar em camadas.'} Você pode forçar outro formato; eu registro que foi escolha sua.`)
+    a.decide('Formato do lançamento.', `<b>${s.alto ? 'Live única com aplicação' : 'Série de 3 CPLs com checkout'}</b>`, 'matriz de formato · ticket, operação e histórico')
     a.choices([['Manter o formato', 'Mantém.', true], ['Forçar CPLs', 'Quero fazer CPLs mesmo assim.']])
   },
   // 10 · oferta, segmento, calendário → fase 3
   async (said, a) => {
-    if (/cpl/i.test(said)) a.sys('Registrado: formato <b>forçado</b> pelo expert.')
+    if (/cpl/i.test(said)) { a.sys('Registrado: formato <b>forçado</b> pelo expert.'); a.decide('Formato forçado.', 'Série de 3 CPLs, contra a matriz.', 'escolha da expert · registrado') }
     a.unlock('oferta'); a.unlock('segmento'); a.unlock('calendario'); a.focus('estrat')
     await a.ai('Montei a oferta e o calendário: aquecimento a partir do D-15, live no D0, aplicação com janela de 24h, replay com a mesma escassez. Segmento travado como <b>psicóloga</b>: vocabulário "paciente, consultório, abordagem" e uma lista de banidos que o linter confere em toda peça.')
     a.phase(3)
@@ -104,11 +109,13 @@ export const STEPS = [
     a.status('Linter · regras da casa + compliance + segmento'); await sleep(700)
     a.flag('blk-8'); a.focus('blk-8'); a.busy(false)
     a.sys('Linter: <b>5 ocorrências</b>, 4 corrigidas sozinho, 1 pede a sua confirmação.')
+    a.decide('Peças geradas e passadas no linter.', '10 anúncios · 12 seções · 10 blocos · 14 mensagens. 5 ocorrências, 4 corrigidas.', 'regras da casa + compliance + banidos do segmento')
     await a.ai('Peças prontas. O linter pegou uma palavra banida no segmento no bloco 8 do roteiro ("ansiedade") e propôs "sofrimento emocional". Como é roteiro seu, eu não troco sem você ver.')
     a.choices([['Aceitar a troca', 'Aceito a troca.', true], ['Editar eu mesma', 'Vou editar eu mesma.']])
   },
   // 12 · canvas completo
   async (_, a) => {
+    a.decide('Termo banido trocado.', '“ansiedade” → “sofrimento emocional” no bloco 8 do roteiro.', 'confirmado pela expert · compliance Meta + segmento')
     a.unflag('blk-8'); GROUPS.exec.forEach(a.unlock); GROUPS.rastro.forEach(a.unlock); a.phase(4); a.fit()
     await a.ai('Canvas publicado. Tudo que a gente decidiu e gerou está aí: a pilha, a estratégia, os 10 anúncios, a página seção por seção, o roteiro, as réguas, o checklist e o rastreamento. Cada ramo da rede é uma etapa: clique pra entrar e ver o que foi gerado nela.')
     await a.ai('Quer ver o que acontece quando a campanha roda? Eu simulo o 3º dia da leva com ~100 cliques por anúncio, que é o mínimo antes de concluir qualquer coisa.')
@@ -126,6 +133,7 @@ export const STEPS = [
   // 14 · pós-live
   async (said, a) => {
     a.sys(/só a verba/i.test(said) ? 'Registrado: verba +30%. A4 segue rodando, marcado pra revisão em 24h.' : 'Registrado: verba +30% · A4 pausado.')
+    a.decide('Campanha performando.', /só a verba/i.test(said) ? 'Verba +30%. A4 mantido para revisão.' : 'Verba +30% · R01-A4 pausado (hook 22%).', 'régua do método · única alavanca permitida é verba')
     a.unlock('cortes'); a.focus('cortes')
     await a.ai('Da gravação da live eu tirei <b>3 cortes</b> com a Trava da Virada: cada um carrega um reframe que a pessoa não teria sozinha. Um trecho foi rejeitado porque só dizia "se posicione". Saem sem card de venda, com UTM por corte.')
     a.unlock('r02'); a.focus('r02')
