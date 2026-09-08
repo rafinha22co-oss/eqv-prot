@@ -1,0 +1,164 @@
+/* =====================================================================
+   Tokens — extraídos do Figma "Instagram UI Kit 4.0" (2026-09-08)
+   + acento ouro (Chrys). Escala do kit é mobile; aqui vale ×1.15.
+   Fonte: o kit usa SF Pro Display. No Mac, -apple-system É a SF Pro.
+   ===================================================================== */
+
+:root {
+  /* primitivos do kit */
+  --gray-20: #f3f4f6;
+  --gray-30: #dbdfe4;
+  --ink: #0c1014;
+  --white: #ffffff;
+  --black: #000000;
+  --gold: #c49a3c;
+  --gold-deep: #9c7420;
+  --emphasis: #ff0034;
+  --verified: #0098fd;
+  --live: #ff0069;
+  --exclusive: #7638fa;
+  --green: #00da00;
+
+  /* semânticos (modo claro = padrão do kit) */
+  --bg-default: var(--white);
+  --bg-card: var(--white);
+  --bg-subtle: var(--gray-30);
+  --bg-subtler: var(--gray-20);
+  --bg-interactive: var(--gold-deep);
+  --bg-notification: var(--emphasis);
+  --bg-translucent: rgba(255, 255, 255, .35);
+  --bg-translucent-inverted: rgba(0, 0, 0, .6);
+  --text-default: var(--ink);
+  --text-subtle: #6f7680;
+  --text-inverted: var(--white);
+  --text-link: var(--gold-deep);
+  --icon-default: var(--ink);
+  --icon-subtle: #6f7680;
+  --border-default: var(--ink);
+  --border-subtler: var(--gray-30);
+  --border-inverted: var(--white);
+  --brand-ink: #14140f;
+  --accent: var(--gold-deep);
+  --accent-soft: rgba(156, 116, 32, .12);
+  --accent-glow: rgba(156, 116, 32, .35);
+  --ok: #1f9d55;
+  --warn: #d97706;
+  --bad: #d9342b;
+  --canvas-bg: #eceef1;
+  --canvas-grid: rgba(12, 16, 20, .06);
+
+  /* borda */
+  --bw-hairline: .5px;
+  --bw-thin: 1px;
+  --bw-medium: 1.5px;
+  --bw-thick: 2px;
+
+  /* espaço (base 4 do kit) */
+  --s0: 0px; --s2: 2px; --s4: 4px; --s6: 6px; --s8: 8px; --s10: 10px; --s12: 12px;
+  --s16: 16px; --s24: 24px; --s48: 48px; --s64: 64px;
+
+  /* raio */
+  --r0: 0; --r2: 2px; --r4: 4px; --r6: 6px; --r8: 8px; --r16: 16px; --r24: 24px; --r-full: 100px;
+
+  /* tipografia: uma família, três pesos, hierarquia por peso */
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* mono nativa: para dado que se lê como dado (UTM, timestamp, id) */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  --w-regular: 400; --w-semibold: 600; --w-bold: 700;
+  /* escala do kit ×1.15 (desktop) */
+  --fs-caption2: 8px;   /* 7  */
+  --fs-caption1: 11px;  /* 10 */
+  --fs-footnote: 13px;  /* 11 */
+  --fs-callout: 14px;   /* 12 */
+  --fs-body: 15px;      /* 13 */
+  --fs-title3: 16px;    /* 14 */
+  --fs-title2: 17px;    /* 15 */
+  --fs-system: 19px;    /* 17 */
+  --fs-title1: 24px;    /* 21 */
+  --fs-display: 34px;   /* fora do kit: nome da tese */
+  --lh-tight: 1.1; --lh-snug: 1.3; --lh-body: 1.45;
+  /* tracking: só o display fecha; texto corrido fica no natural do kit */
+  --track-display: -.03em; --track-title: -.2px; --track-caps: 1.2px;
+
+  /* tamanhos de componente (do kit) */
+  --btn-h-sm: 28px; --btn-h-md: 36px; --btn-h-pill: 38px;
+  --btn-round-sm: 18px; --btn-round-md: 24px; --btn-round-lg: 38px;
+  --input-h: 38px;
+  --bar-h-nav: 56px; --bar-h-tab: 56px;
+  --avatar-md: 38px; --avatar-sm: 28px; --avatar-xs: 22px;
+  --icon-sm: 16px; --icon-md: 24px;
+  --blur-sheet: 64px;
+
+  /* vidro: superfície dos nós sobre a rede viva (a rede é sempre escura) */
+  --glass-bg: linear-gradient(140deg, rgba(30, 27, 20, .94), rgba(15, 15, 17, .92));
+  --glass-border: rgba(214, 200, 160, .13);
+  --glass-blur: 10px;
+}
+
+/* modo escuro = inversão real do kit (fundo preto) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-default: var(--black);
+    --bg-card: #121212;
+    --bg-subtle: #262626;
+    --bg-subtler: #121212;
+    --bg-interactive: var(--gold);
+    --bg-translucent: rgba(255, 255, 255, .2);
+    --text-default: var(--white);
+    --text-subtle: #a8a8a8;
+    --text-inverted: var(--ink);
+    --text-link: var(--gold);
+    --icon-default: var(--white);
+    --icon-subtle: #a8a8a8;
+    --border-default: var(--white);
+    --border-subtler: #262626;
+    --border-inverted: var(--ink);
+    --brand-ink: #ede6d6;
+    --accent: var(--gold);
+    --accent-soft: rgba(196, 154, 60, .14);
+    --accent-glow: rgba(196, 154, 60, .5);
+    --ok: #4cc27a;
+    --bad: #f0564f;
+    --canvas-bg: #0a0a0a;
+    --canvas-grid: rgba(255, 255, 255, .05);
+  }
+}
+:root[data-theme="dark"] {
+  --bg-default: var(--black);
+  --bg-card: #121212;
+  --bg-subtle: #262626;
+  --bg-subtler: #121212;
+  --bg-interactive: var(--gold);
+  --bg-translucent: rgba(255, 255, 255, .2);
+  --text-default: var(--white);
+  --text-subtle: #a8a8a8;
+  --text-inverted: var(--ink);
+  --text-link: var(--gold);
+  --icon-default: var(--white);
+  --icon-subtle: #a8a8a8;
+  --border-default: var(--white);
+  --border-subtler: #262626;
+  --border-inverted: var(--ink);
+  --brand-ink: #ede6d6;
+  --accent: var(--gold);
+  --accent-soft: rgba(196, 154, 60, .14);
+  --accent-glow: rgba(196, 154, 60, .5);
+  --ok: #4cc27a;
+  --bad: #f0564f;
+  --canvas-bg: #0a0a0a;
+  --canvas-grid: rgba(255, 255, 255, .05);
+}
+
+/* estilos de texto do kit */
+.t-title1 { font: var(--w-bold) var(--fs-title1)/var(--lh-tight) var(--font); letter-spacing: -.2px; }
+.t-title2 { font: var(--w-bold) var(--fs-title2)/var(--lh-snug) var(--font); }
+.t-title3 { font: var(--w-bold) var(--fs-title3)/var(--lh-snug) var(--font); }
+.t-headline { font: var(--w-semibold) var(--fs-body)/var(--lh-snug) var(--font); }
+.t-body { font: var(--w-regular) var(--fs-body)/var(--lh-body) var(--font); }
+.t-body-semibold { font: var(--w-semibold) var(--fs-body)/var(--lh-body) var(--font); }
+.t-callout { font: var(--w-regular) var(--fs-callout)/var(--lh-body) var(--font); }
+.t-callout-semibold { font: var(--w-semibold) var(--fs-callout)/var(--lh-body) var(--font); }
+.t-footnote { font: var(--w-regular) var(--fs-footnote)/var(--lh-snug) var(--font); }
+.t-footnote-semibold { font: var(--w-semibold) var(--fs-footnote)/var(--lh-snug) var(--font); }
+.t-caption1 { font: var(--w-regular) var(--fs-caption1)/var(--lh-snug) var(--font); }
+.t-caption1-semibold { font: var(--w-semibold) var(--fs-caption1)/var(--lh-snug) var(--font); letter-spacing: .4px; }
